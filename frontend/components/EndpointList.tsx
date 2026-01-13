@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
+import api from '@/lib/axois'; 
 interface Endpoint {
   endpoint_id: string;
   type: string;
@@ -15,7 +14,7 @@ const EndpointList = () => {
 
   const fetchEndpoints = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/endpoints");
+      const res = await api.get("/endpoints");
       setEndpoints(res.data);
     } catch (err) {
       console.error("Failed to fetch endpoints", err);

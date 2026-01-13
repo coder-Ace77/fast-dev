@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axois";
 import { CodeEditor } from "./CodeEditor";
 
 interface Props {
@@ -44,7 +44,7 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
         };
       }
 
-      const res = await axios.post("http://localhost:8000/url", {
+      const res = await api.post("http://localhost:8000/url", {
         type: activeTab,
         config: config
       });
