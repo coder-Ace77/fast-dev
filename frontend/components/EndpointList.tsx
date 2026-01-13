@@ -63,7 +63,7 @@ const EndpointList = () => {
                 <div className="space-y-1">
                   <div className="text-xs text-gray-400 truncate">
                     <span className="text-gray-600 mr-2">BASE:</span>
-                    {BASE_URL}/{ep.endpoint_id}
+                    {BASE_URL}{ep.endpoint_id}
                   </div>
                   <div className="text-xs text-gray-500">
                     <span className="text-gray-600 mr-2">PATH:</span>
