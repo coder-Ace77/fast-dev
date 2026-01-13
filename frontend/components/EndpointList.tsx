@@ -8,6 +8,9 @@ interface Endpoint {
   config: any;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+
 const EndpointList = () => {
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +63,7 @@ const EndpointList = () => {
                 <div className="space-y-1">
                   <div className="text-xs text-gray-400 truncate">
                     <span className="text-gray-600 mr-2">BASE:</span>
-                    http://localhost:8000/{ep.endpoint_id}
+                    {BASE_URL}/{ep.endpoint_id}
                   </div>
                   <div className="text-xs text-gray-500">
                     <span className="text-gray-600 mr-2">PATH:</span>
