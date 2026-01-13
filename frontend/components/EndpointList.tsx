@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import api from '@/lib/axois'; 
+import api from '@/lib/axios'; 
 interface Endpoint {
   endpoint_id: string;
   type: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import api from "@/lib/axois";
+import api from "@/lib/axios";
 import { CodeEditor } from "./CodeEditor";
 
 interface Props {
@@ -26,7 +26,16 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
   );
   const [funcData, setFuncData] = useState('{\n  "admin": "adil",\n  "version": 1.0\n}');
 
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
+
   const handleSubmit = async () => {
+    if (!name.trim()) {
+      alert("Please provide a name for this mock.");
+      return;
+    }
+
     let config = {};
 
     try {
@@ -44,37 +53,80 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
         };
       }
 
-      const res = await api.post("http://localhost:8000/url", {
+      const res = await api.post("/url", {
         type: activeTab,
-        config: config
+        config: config,
+        name: name,                
+        description: description,  
+        is_public: isPublic        
       });
+
       onSuccess(res.data.base_url);
     } catch (e: any) {
-      alert(e.message || "Execution error: Check syntax and JSON formats");
+      const errorMsg = e.response?.data?.detail?.[0]?.msg || e.message;
+      alert(`Submission Error: ${errorMsg}`);
+      console.error("Full Error Context:", e.response?.data);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Shared Path Input */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 bg-zinc-900/50 rounded-2xl border border-zinc-800 shadow-inner">
+        <div className="space-y-2">
+          <label className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Mock Identity *</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-sm focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+            placeholder="e.g., Payment Gateway Mock"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Visibility</label>
+          <select
+            value={isPublic ? "public" : "private"}
+            onChange={(e) => setIsPublic(e.target.value === "public")}
+            className="w-full p-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-sm focus:ring-1 focus:ring-indigo-500 outline-none cursor-pointer"
+          >
+            <option value="public">🌍 Public</option>
+            <option value="private">🔒 Private</option>
+          </select>
+        </div>
+        <div className="md:col-span-2 space-y-2">
+          <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Project Description</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-sm focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+            placeholder="Describe the purpose of this mock..."
+          />
+        </div>
+      </div>
+
+      <div className="h-px bg-zinc-800 w-full" />
+
       {(activeTab === "static" || activeTab === "functional") && (
         <div className="space-y-2">
           <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Route Path</label>
-          <input
-            type="text"
-            value={path}
-            onChange={(e) => setPath(e.target.value)}
-            className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 font-mono text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-            placeholder="/api/v1/resource"
-          />
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600 font-mono text-sm">/</span>
+            <input
+              type="text"
+              value={path.startsWith('/') ? path.slice(1) : path}
+              onChange={(e) => setPath('/' + e.target.value)}
+              className="w-full pl-6 p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 font-mono text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              placeholder="api/v1/resource"
+            />
+          </div>
         </div>
       )}
 
-      {/* Conditional Editor Layout */}
       {activeTab !== "functional" ? (
         <div className="space-y-2">
           <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-            {activeTab === "mapping" ? "Route Mapping (JSON Array)" : "Response JSON"}
+            {activeTab === "mapping" ? "Route Mapping Configuration (JSON Array)" : "Response JSON Payload"}
           </label>
           <CodeEditor 
             language="json" 
@@ -87,7 +139,7 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
           <div className="space-y-2">
             <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex justify-between">
               Python Handler Logic
-              <span className="text-indigo-400 normal-case">handler(url, headers, body, data)</span>
+              <span className="text-indigo-400 normal-case font-mono">handler(url, headers, body, data)</span>
             </label>
             <CodeEditor 
               language="python" 
@@ -97,7 +149,7 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Persistent Data Object (JSON)</label>
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Initial Data State (JSON)</label>
             <CodeEditor 
               language="json" 
               value={funcData} 
@@ -108,11 +160,12 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
         </div>
       )}
 
+      {/* SECTION: Submit */}
       <button
         onClick={handleSubmit}
-        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg active:scale-[0.98]"
+        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] active:scale-[0.98] border border-indigo-400/20"
       >
-        Compile & Deploy Mock
+        Build & Deploy Endpoint
       </button>
     </div>
   );
