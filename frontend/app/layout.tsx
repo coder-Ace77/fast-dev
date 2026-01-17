@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "FastDev | Instant Mock Engine",
   description: "Deploy programmable API mocks in seconds",
   icons: {
-    icon: "/favicon.png", 
+    icon: "/favicon.png",
   },
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({
               </div>
               <span className="text-white font-bold text-xl tracking-tighter">FastDev</span>
             </Link>
-            
+
             <div className="flex items-center gap-8">
               <Link href="/docs" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
                 Docs
@@ -49,8 +49,8 @@ export default function RootLayout({
               <Link href="/test" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
                 Test
               </Link>
-              <Link 
-                href="/create" 
+              <Link
+                href="/create"
                 className="bg-zinc-100 hover:bg-white text-black text-xs font-bold px-4 py-2 rounded-lg transition-all active:scale-95 shadow-lg"
               >
                 Create Mock
@@ -62,10 +62,9 @@ export default function RootLayout({
         {/* Main Content Area */}
         <main>{children}</main>
 
-        {/* Simple Footer */}
         <footer className="border-t border-zinc-900 py-12 mt-20">
           <div className="max-w-7xl mx-auto px-6 text-center text-zinc-600 text-xs tracking-widest uppercase">
-            &copy; 2026 FastDev Engine &bull; Built for Speed
+            &copy; 2026 FastDev Engine &bull; Built by Mohd Adil
           </div>
         </footer>
       </body>

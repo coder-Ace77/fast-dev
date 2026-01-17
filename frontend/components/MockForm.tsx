@@ -3,28 +3,21 @@
 import { useState } from "react";
 import api from "@/lib/axios";
 import { CodeEditor } from "./CodeEditor";
+import form from "@/constants/form";
 
 interface Props {
   activeTab: string;
+  method: string;
   onSuccess: (url: string) => void;
 }
 
-export const MockForm = ({ activeTab, onSuccess }: Props) => {
+export const MockForm = ({ activeTab, method, onSuccess }: Props) => {
   const [path, setPath] = useState("/");
   const [jsonInput, setJsonInput] = useState('{\n  "status": "success"\n}');
-  const [funcCode, setFuncCode] = useState(
-`def handler(url, headers, body, data):
-    # url: current mock url
-    # headers: dict of request headers
-    # body: parsed json or raw string
-    # data: your persistent data object
-    
-    return {
-        "message": "Hello from FastDev",
-        "stored_data": data
-    }`
-  );
-  const [funcData, setFuncData] = useState('{\n  "admin": "adil",\n  "version": 1.0\n}');
+  const [funcCode, setFuncCode] = useState(form.getCode);
+
+  const [postCode, setPostCode] = useState(form.postCode);
+  const [funcData, setFuncData] = useState(form.funcData);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -46,19 +39,26 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
         if (!Array.isArray(routes)) throw new Error("Mapping must be an array of objects");
         config = { routes };
       } else if (activeTab === "functional") {
-        config = { 
-          path, 
-          code: funcCode, 
-          data: JSON.parse(funcData) 
+        config = {
+          path,
+          code: funcCode,
+          data: JSON.parse(funcData)
+        };
+      } else if (activeTab === "post_mock") {
+        config = {
+          path,
+          method: method,
+          code: postCode,
+          data: JSON.parse(funcData)
         };
       }
 
       const res = await api.post("/url", {
         type: activeTab,
         config: config,
-        name: name,                
-        description: description,  
-        is_public: isPublic        
+        name: name,
+        description: description,
+        is_public: isPublic
       });
 
       onSuccess(res.data.base_url);
@@ -123,15 +123,15 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
         </div>
       )}
 
-      {activeTab !== "functional" ? (
+      {activeTab !== "functional" && activeTab !== "post_mock" ? (
         <div className="space-y-2">
           <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
             {activeTab === "mapping" ? "Route Mapping Configuration (JSON Array)" : "Response JSON Payload"}
           </label>
-          <CodeEditor 
-            language="json" 
-            value={jsonInput} 
-            onChange={(val) => setJsonInput(val || "")} 
+          <CodeEditor
+            language="json"
+            value={jsonInput}
+            onChange={(val) => setJsonInput(val || "")}
           />
         </div>
       ) : (
@@ -141,26 +141,24 @@ export const MockForm = ({ activeTab, onSuccess }: Props) => {
               Python Handler Logic
               <span className="text-indigo-400 normal-case font-mono">handler(url, headers, body, data)</span>
             </label>
-            <CodeEditor 
-              language="python" 
-              value={funcCode} 
-              onChange={(val) => setFuncCode(val || "")} 
+            <CodeEditor
+              language="python"
+              value={activeTab === "post_mock" ? postCode : funcCode}
+              onChange={(val) => activeTab === "post_mock" ? setPostCode(val || "") : setFuncCode(val || "")}
               height="350px"
             />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Initial Data State (JSON)</label>
-            <CodeEditor 
-              language="json" 
-              value={funcData} 
-              onChange={(val) => setFuncData(val || "")} 
+            <CodeEditor
+              language="json"
+              value={funcData}
+              onChange={(val) => setFuncData(val || "")}
               height="150px"
             />
           </div>
         </div>
       )}
-
-      {/* SECTION: Submit */}
       <button
         onClick={handleSubmit}
         className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] active:scale-[0.98] border border-indigo-400/20"
