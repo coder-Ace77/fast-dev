@@ -9,3 +9,4 @@ def format_path(path: str) -> str:
 def generate_unique_id(length: int = 8) -> str:
     """Generates a shortened unique identifier."""
     return str(uuid.uuid4())[:length]
+    

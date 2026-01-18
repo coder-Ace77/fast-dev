@@ -6,16 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+BASE_URL = os.getenv("BASE_URL")
 
 async def list_endpoints():
     return await collection.find({}, {"_id": 0}).to_list(length=1000)
 
 async def create_new_mock(payload):
-    unique_id = generate_unique_id()
-    
-    # FIX: Use model_dump() for Pydantic v2, or .dict() for Pydantic v1
-    # This works regardless of which Union member was matched
+    unique_id = generate_unique_id()    
     if hasattr(payload.config, "model_dump"):
         config_dict = payload.config.model_dump()
     else:
@@ -28,7 +25,6 @@ async def create_new_mock(payload):
     }
     
     await collection.insert_one(new_endpoint)
-    
     path_suffix = config_dict.get('path', '/')
     return {
         "endpoint_id": unique_id,
@@ -58,30 +54,56 @@ async def resolve_mock_response(endpoint_id: str, rest_of_path: str, request_met
     elif mock_type == "functional":
         # Build the full URL for the injected param
         full_url = f"{BASE_URL}/{endpoint_id}{request_path}"
-        return execute_functional_code(
+        data = config.get("data", {})
+        
+        result = execute_functional_code(
             config.get("code", ""),
-            config.get("data", {}),
+            data,
             full_url,
             request_meta
         )
+        
+        # Persist the modified data
+        await collection.update_one(
+            {"endpoint_id": endpoint_id},
+            {"$set": {"config.data": data}}
+        )
+        
+        return result
+
+    elif mock_type == "post_mock":
+        expected_method = config.get("method", "POST")
+        if request_meta.get("method") != expected_method:
+            raise HTTPException(status_code=405, detail=f"Method Not Allowed: This mock is for {expected_method} requests only")
+
+        full_url = f"{BASE_URL}/{endpoint_id}{request_path}"
+        data = config.get("data", {})
+        
+        result = execute_functional_code(
+            config.get("code", ""),
+            data,
+            full_url,
+            request_meta
+        )
+        
+        # Persist the modified data
+        await collection.update_one(
+            {"endpoint_id": endpoint_id},
+            {"$set": {"config.data": data}}
+        )
+        
+        return result
 
     raise HTTPException(status_code=404, detail="Route matching failed")
 
 def execute_functional_code(code: str, data: dict, url: str, request_meta: dict):
-    """
-    Executes the user's Python code in a restricted scope.
-    """
-    # local_vars will store the function definition after exec()
     local_vars = {}
     try:
-        # Execute the code string
         exec(code, {}, local_vars)
         
         handler = local_vars.get("handler")
         if not handler:
             raise ValueError("No function named 'handler' found in code.")
-
-        # Call the user function with the 4 required params
         result = handler(
             url, 
             request_meta.get("headers"), 
