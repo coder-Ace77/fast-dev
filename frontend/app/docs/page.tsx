@@ -6,7 +6,7 @@ export default function DocsPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans selection:bg-indigo-500/30">
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-16">
-        
+
         {/* Sticky Sidebar Navigation */}
         <aside className="hidden lg:block lg:col-span-3">
           <div className="sticky top-24 space-y-8">
@@ -14,14 +14,15 @@ export default function DocsPage() {
               <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4">Architecture</h4>
               <ul className="space-y-3 text-sm font-medium">
                 <li><a href="#introduction" className="hover:text-white transition-colors">Introduction</a></li>
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How it works</a></li>
+                <li><a href="#authentication" className="text-indigo-400">Authentication & Security</a></li>
+                <li><a href="#registry" className="hover:text-white transition-colors">Registry & Monitoring</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4">Mock Types</h4>
+              <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4">Core Features</h4>
               <ul className="space-y-3 text-sm font-medium">
-                <li><a href="#static" className="text-indigo-400">Static Responses</a></li>
-                <li><a href="#mapping" className="hover:text-white transition-colors">Route Mapping</a></li>
+                <li><a href="#ai-generator" className="text-indigo-400">✨ AI Generator</a></li>
+                <li><a href="#base-paths" className="hover:text-white transition-colors">Custom Base Paths</a></li>
                 <li><a href="#functional" className="hover:text-white transition-colors">Programmable Logic</a></li>
               </ul>
             </div>
@@ -33,73 +34,86 @@ export default function DocsPage() {
           <header className="mb-16">
             <h1 className="text-5xl font-black text-white mb-6 tracking-tighter" id="introduction">Documentation</h1>
             <p className="text-lg text-zinc-400 leading-relaxed">
-              FastDev is a high-performance mocking engine designed to eliminate backend dependencies. 
+              FastDev is a high-performance mocking engine designed to eliminate backend dependencies.
               Deploy programmable endpoints with persistent state in under 30 seconds.
             </p>
           </header>
 
           <div className="space-y-24">
-            
-            {/* STATIC SECTION */}
-            <section id="static" className="scroll-mt-24">
+
+            {/* AI GENERATOR SECTION */}
+            <section id="ai-generator" className="scroll-mt-24">
               <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-2xl font-bold text-white">Static Responses</h2>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 font-bold uppercase">v1.0</span>
+                <h2 className="text-2xl font-bold text-white">✨ AI Generator</h2>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold uppercase">New</span>
               </div>
               <p className="text-zinc-400 mb-8 leading-relaxed">
-                The simplest way to mock an API. Provide a path and a JSON payload. Every request to that path returns the same data.
+                Describe your API logic in plain English, and FastDev will instantly generate a fully functional Python handler with persistence and validation.
               </p>
-              
+
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
-                <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Technical Spec</h3>
-                <ul className="space-y-3 text-sm text-zinc-400">
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 mt-1">●</span>
-                    <span><strong>Default Path:</strong> If no path is provided, the mock resolves at the root <code>/</code>.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-400 mt-1">●</span>
-                    <span><strong>Content-Type:</strong> Automatically set to <code>application/json</code>.</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 flex gap-4">
-                <span className="text-amber-500 font-bold text-sm">PRO TIP</span>
-                <p className="text-sm text-amber-200/70">Use Static mocks for 404/500 error simulation by pasting the specific error schema your frontend expects.</p>
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">How it works</h3>
+                <ol className="space-y-4 text-sm text-zinc-400 list-decimal list-inside">
+                  <li><strong>Prompt:</strong> Explain what the endpoint should do (e.g., "Create a user with email validation and return a JWT").</li>
+                  <li><strong>Formats:</strong> Specify Input (e.g., JSON) and Output (e.g., JSON) expectations.</li>
+                  <li><strong>Initial State:</strong> Optionally provide seed data (e.g., <code>{`{"users": []}`}</code>) for the mock to start with.</li>
+                  <li><strong>Deploy:</strong> Click "Generate & Deploy" to get your live endpoint instantly.</li>
+                </ol>
               </div>
             </section>
 
-            {/* MAPPING SECTION */}
-            <section id="mapping" className="scroll-mt-24">
-              <h2 className="text-2xl font-bold text-white mb-4">Route Mapping</h2>
+            {/* BASE PATHS SECTION */}
+            <section id="base-paths" className="scroll-mt-24">
+              <h2 className="text-2xl font-bold text-white mb-4">Custom Base Paths</h2>
               <p className="text-zinc-400 mb-8 leading-relaxed">
-                Define an array of sub-routes within a single deployment. This mimics a full REST resource.
+                Organize your mocks under custom namespaces (Base Paths) or group them under existing ones.
               </p>
-
-              
-
-              <div className="rounded-xl overflow-hidden mb-6">
-                <CodeEditor 
-                  language="json"
-                  height="220px"
-                  value={JSON.stringify([
-                    { "path": "/users", "value": { "count": 2, "data": [] } },
-                    { "path": "/settings", "value": { "theme": "dark" } }
-                  ], null, 2)}
-                  onChange={() => {}}
-                />
-              </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
-                  <p className="text-xs font-bold text-zinc-500 uppercase mb-2">Matching Logic</p>
-                  <p className="text-sm text-zinc-400 italic">Suffix-based routing. The engine checks the end of the URL against your defined paths.</p>
+                  <p className="text-xs font-bold text-zinc-500 uppercase mb-2">Existing IDs</p>
+                  <p className="text-sm text-zinc-400 italic">Select from your previously created Base Paths to add new routes (e.g., `/api/v1` &rarr; add `/users`, `/posts`).</p>
                 </div>
                 <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
-                  <p className="text-xs font-bold text-zinc-500 uppercase mb-2">Max Routes</p>
-                  <p className="text-sm text-zinc-400 italic">Up to 50 individual mappings per endpoint ID are supported in the free tier.</p>
+                  <p className="text-xs font-bold text-zinc-500 uppercase mb-2">Create New</p>
+                  <p className="text-sm text-zinc-400 italic">Define a unique ID (e.g., `my-project-api`). We verify availability instantly to ensure no collisions.</p>
                 </div>
+              </div>
+            </section>
+
+            {/* AUTH SECTION */}
+            <section id="authentication" className="scroll-mt-24">
+              <h2 className="text-2xl font-bold text-white mb-4">Authentication & Security</h2>
+              <p className="text-zinc-400 mb-8 leading-relaxed">
+                FastDev provides secure access to your mocks while allowing for public sharing.
+              </p>
+
+              <ul className="space-y-3 text-sm text-zinc-400">
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-500 mt-1">●</span>
+                  <span><strong>Extended Sessions:</strong> Login sessions now last for <strong>30 days</strong>, so you don't receive interruptions during development.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-indigo-400 mt-1">●</span>
+                  <span><strong>Visibility Control:</strong> Mark endpoints as <strong>Public</strong> (accessible by anyone) or <strong>Private</strong> (only visible to you).</span>
+                </li>
+              </ul>
+            </section>
+
+            {/* REGISTRY SECTION */}
+            <section id="registry" className="scroll-mt-24">
+              <h2 className="text-2xl font-bold text-white mb-4">Registry & Monitoring</h2>
+              <p className="text-zinc-400 mb-8 leading-relaxed">
+                The Registry is your central hub for managing all deployed endpoints.
+              </p>
+
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Key Features</h3>
+                <ul className="space-y-3 text-sm text-zinc-400">
+                  <li><strong>Detailed View:</strong> Click "View Details" to see the full configuration, code, and initial data of any endpoint.</li>
+                  <li><strong>Filtering:</strong> Automatically shows your private endpoints and all public endpoints.</li>
+                  <li><strong>Live Updates:</strong> Endpoints are active immediately upon creation.</li>
+                </ul>
               </div>
             </section>
 
@@ -107,11 +121,9 @@ export default function DocsPage() {
             <section id="functional" className="scroll-mt-24 pb-20">
               <h2 className="text-2xl font-bold text-white mb-4 font-mono">def handler(url, headers, body, data):</h2>
               <p className="text-zinc-400 mb-8 leading-relaxed">
-                Functional mocks inject your request into a restricted Python environment. 
+                Functional mocks inject your request into a restricted Python environment.
                 This allows for dynamic logic, header-based auth, and persistent state.
               </p>
-
-              
 
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
                 <div>
@@ -152,7 +164,7 @@ export default function DocsPage() {
 
               <div className="mt-10 space-y-4">
                 <h4 className="text-sm font-bold text-white italic">Example: Stateful Counter</h4>
-                <CodeEditor 
+                <CodeEditor
                   language="python"
                   height="250px"
                   value={`def handler(url, headers, body, data):
@@ -167,19 +179,19 @@ export default function DocsPage() {
         "msg": "Request processed",
         "total_requests": data["count"]
     }`}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
               </div>
 
               <div className="mt-12 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl p-8">
                 <h3 className="text-lg font-bold text-white mb-2">Important Constraints</h3>
                 <p className="text-sm text-zinc-400 mb-4 italic leading-relaxed">
-                  To ensure system stability, functional mocks have a 2.0s execution timeout and cannot access 
+                  To ensure system stability, functional mocks have a 2.0s execution timeout and cannot access
                   the Python standard libraries (os, sys, etc.).
                 </p>
                 <div className="flex gap-2">
-                   <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5"></span>
-                   <p className="text-sm text-zinc-300">Persistent variables in <code>data</code> are saved automatically after execution.</p>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5"></span>
+                  <p className="text-sm text-zinc-300">Persistent variables in <code>data</code> are saved automatically after execution.</p>
                 </div>
               </div>
             </section>
