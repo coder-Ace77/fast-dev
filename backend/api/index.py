@@ -11,8 +11,6 @@ load_dotenv()
 
 app = FastAPI(title="Mock API Engine")
 
-api = APIRouter(prefix="/api")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
