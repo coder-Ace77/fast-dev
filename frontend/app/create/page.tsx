@@ -95,7 +95,7 @@ export default function Home() {
         ? `${aiDescription}\n\n[Context/Initial Data]: ${aiInitialData}`
         : aiDescription;
 
-      const genRes = await api.post("/api/ai/generate", {
+      const genRes = await api.post("/ai/generate", {
         description: fullDescription,
         input_format: aiInputFormat,
         output_format: aiOutputFormat,

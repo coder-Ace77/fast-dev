@@ -13,7 +13,7 @@ export default function RegisterPage() {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await api.post("/api/auth/register", { email, password });
+            const res = await api.post("/auth/register", { email, password });
             localStorage.setItem("token", res.data.access_token);
             router.push("/");
         } catch (err: any) {
